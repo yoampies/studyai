@@ -2,7 +2,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Home from './sections/Home';
-import Submit from './sections/Submit';
+import Upload from './sections/Upload';
 import DocDetails from './sections/DocDetails';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/submit" element={<Submit />} />
+        <Route path="/upload" element={<Upload />} />
         <Route path="/details/:analysisId" element={<DocDetails />} />
       </Routes>
     </BrowserRouter>
