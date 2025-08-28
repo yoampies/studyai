@@ -7,10 +7,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 function Upload() {
     const [tab, setTab] = useState("text");
-    const navigate = useNavigate();
     const [fileName, setFileName] = useState("")
     const [textInput, setTextInput] = useState("")
     const [processingOptions, setProcessingOptions] = useState([])
+    const navigate = useNavigate();
+    const order = ['Summary', 'Multiple Choice Exam', 'Flashcards'];
 
     const handleTabChange = (state) => { 
       setTab(state)
@@ -31,13 +32,18 @@ function Upload() {
 
     const handleCheckboxChange = (option) => {
       setProcessingOptions(prevOptions => {
-        if(prevOptions.includes(option)) {
-          return prevOptions.filter(item => item !== option);
+        let updatedOptions;
+        if (prevOptions.includes(option)) {
+          updatedOptions = prevOptions.filter(item => item !== option);
         } else {
-          return [...prevOptions, option]
+          updatedOptions = [...prevOptions, option];
         }
-      })
-    }
+
+        updatedOptions.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+
+        return updatedOptions;
+    }); 
+};
 
     const handleSubmitButton = () => {
       const fileToAnalyse = tab === "file" ? fileName : null;
@@ -50,8 +56,7 @@ function Upload() {
         text: textToAnalyze,
         options: processingOptions
       }
-      //navigate(`details/${analysisID}`, {state: {analysis}});
-      console.log(analysis)
+      navigate(`/details/${analysisID}`, {state: {analysis}});
     }
 
   return (

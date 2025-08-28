@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './sections/Home';
 import Upload from './sections/Upload';
 import DocDetails from './sections/DocDetails';
+import History from './sections/History'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/details/:analysisId" element={<DocDetails />} />
+        <Route path="/history" element={<History />} />
       </Routes>
     </BrowserRouter>
   );
