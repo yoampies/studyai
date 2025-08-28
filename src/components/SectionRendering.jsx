@@ -1,18 +1,37 @@
-import React, {useRef, useState} from 'react'
+import React, {useRef, useState, useEffect} from 'react'
 
-function SectionRendering({ section }) {
+function SectionRendering({ section, onFileNameChange, onTextInputChange }) {
   const commonContainerClasses = "flex max-w-[960px] flex-wrap items-end gap-4 px-4 py-3";
   const fileRef = useRef(null);
-  const [fileName, setFileName] = useState("")
+  const [fileName, setFileName] = useState("");
+  const [textInput, setTextInput] = useState("")
 
   const handleFileButtonClick = () => {
     fileRef.current.click();
   }
 
+  const handleTextChange = (event) => {
+    const text = event.target.value;
+    setTextInput(text);
+    onTextInputChange(text);
+  }
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files;
-    setFileName(selectedFile[0].name)
+    const name = selectedFile[0].name;
+    setFileName(name);
+    onFileNameChange(name);
   }
+
+  useEffect(() => {
+    if(section === "text") {
+      setFileName("");
+      onFileNameChange("")
+    } else {
+      setTextInput("");
+      onTextInputChange("")
+    }
+  }, [section, onFileNameChange, onTextInputChange])
 
   switch (section) {
     case ("text"):
@@ -25,6 +44,8 @@ function SectionRendering({ section }) {
                 rounded-lg text-[#131118] focus:outline-0 focus:ring-0 border border-[#dedce5] bg-white 
                 focus:border-[#dedce5] min-h-36 placeholder:text-[#6e6388] p-[15px] text-base font-normal 
                 leading-normal"
+              onChange={handleTextChange}
+              value={textInput}
             ></textarea>
           </label>
         </div>

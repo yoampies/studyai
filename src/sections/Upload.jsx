@@ -2,13 +2,56 @@ import React, {useState} from 'react'
 import Navbar from '../components/Navbar'
 import SectionRendering from '../components/SectionRendering'
 import { handlingOptions } from '../assets/constants'
-
+import { useNavigate } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid';
 
 function Upload() {
-    const [tab, setTab] = useState("text")
+    const [tab, setTab] = useState("text");
+    const navigate = useNavigate();
+    const [fileName, setFileName] = useState("")
+    const [textInput, setTextInput] = useState("")
+    const [processingOptions, setProcessingOptions] = useState([])
 
     const handleTabChange = (state) => { 
-        setTab(state)
+      setTab(state)
+      if(state === "text") {
+        setFileName("")
+      } else {
+        setTextInput("")
+      }
+    }
+
+    const handleFileChangeInParent = (name) => {
+      setFileName(name)
+    }
+
+    const handleTextChangeInParent = (text) => {
+      setTextInput(text)
+    }
+
+    const handleCheckboxChange = (option) => {
+      setProcessingOptions(prevOptions => {
+        if(prevOptions.includes(option)) {
+          return prevOptions.filter(item => item !== option);
+        } else {
+          return [...prevOptions, option]
+        }
+      })
+    }
+
+    const handleSubmitButton = () => {
+      const fileToAnalyse = tab === "file" ? fileName : null;
+      const textToAnalyze = tab === "text" ? textInput : null;
+      const analysisID = uuidv4();
+      const analysis = {
+        id: analysisID,
+        type: tab,
+        file: fileToAnalyse,
+        text: textToAnalyze,
+        options: processingOptions
+      }
+      //navigate(`details/${analysisID}`, {state: {analysis}});
+      console.log(analysis)
     }
 
   return (
@@ -41,14 +84,17 @@ function Upload() {
                 </label>
               </div>
             </div>
-            <SectionRendering section={tab}/>
+            <SectionRendering section={tab} onFileNameChange={handleFileChangeInParent} onTextInputChange={handleTextChangeInParent}/>
             <h3 className="text-[#131118] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Processing Options</h3>
             <div className="px-4">
                 {handlingOptions.map((option) => (
                     <label className="flex gap-x-3 py-3 flex-row" key={option}>
                         <input
                         type="checkbox"
-                        className="h-5 w-5 rounded border-[#dedce5] border-2 bg-transparent text-[#4514b8] checked:bg-[#4514b8] checked:border-[#4514b8] checked:bg-[image:--checkbox-tick-svg] focus:ring-0 focus:ring-offset-0 focus:border-[#dedce5] focus:outline-none"
+                        className="h-5 w-5 rounded border-[#dedce5] border-2 bg-transparent text-[#4514b8] checked:bg-[#4514b8] 
+                        checked:border-[#4514b8] checked:bg-[image:--checkbox-tick-svg] focus:ring-0 focus:ring-offset-0 
+                        focus:border-[#dedce5] focus:outline-none"
+                        onChange={() => handleCheckboxChange(option)}
                         />
                         <p className="text-[#131118] text-base font-normal leading-normal">{option}</p>
                     </label>
@@ -58,6 +104,7 @@ function Upload() {
               <button
                 className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 
                 bg-[#607afb] text-white text-sm font-bold leading-normal tracking-[0.015em]"
+                onClick={handleSubmitButton}
               >
                 <span className="truncate">Submit</span>
               </button>
