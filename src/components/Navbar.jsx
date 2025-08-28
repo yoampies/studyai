@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function Navbar() {
   return (
@@ -25,7 +26,9 @@ function Navbar() {
             </defs>
             </svg>
         </div>
-        <h2 className="text-[#111218] text-lg font-bold leading-tight tracking-[-0.015em]">StudyAI</h2>
+        <Link to="/">
+            <h2 className="text-[#111218] text-lg font-bold leading-tight tracking-[-0.015em]">StudyAI</h2>
+        </Link>
         </div>
         <div className="flex flex-1 justify-end gap-8">
         <button

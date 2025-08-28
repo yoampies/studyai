@@ -33,3 +33,9 @@ export const recentAnalyses = {
     },
   ],
 };
+
+export const handlingOptions = [
+    "Multiple Choice Exam",
+    "Flashcards",
+    "Summary"
+]
