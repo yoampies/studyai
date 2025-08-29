@@ -116,40 +116,106 @@ export const flashcards = [
   },
 ];
 
-export const RECENT_DOCUMENTS = [
+// src/components/constants.js
+
+export const DUMMY_DOCUMENTS = [
   {
+    id: "hist-1",
     title: "The Renaissance",
-    tools: ["Summary", "Quiz"],
-    processedOn: "2024-01-15",
+    options: ["Summary", "Quiz"],
+    processedOn: "January 15, 2024",
+    results: {
+      summary: "This is a brief summary of the Renaissance, a period of European history marking the transition from the Middle Ages to modernity. It spanned from the 14th to the 17th century and led to significant cultural, artistic, political, and economic changes.",
+      quiz: [
+        {
+          question: "When did the Renaissance take place?",
+          options: ["11th-13th century", "14th-17th century", "18th-19th century", "1st-3rd century"],
+          answer: "14th-17th century",
+        },
+        {
+          question: "Which of the following was a key characteristic of the Renaissance?",
+          options: ["Industrialization", "Feudalism", "Humanism", "Nomadic living"],
+          answer: "Humanism",
+        },
+      ],
+    },
   },
   {
+    id: "hist-2",
     title: "World War II",
-    tools: ["Summary"],
-    processedOn: "2024-01-12",
+    options: ["Summary"],
+    processedOn: "January 12, 2024",
+    results: {
+      summary: "World War II was a global conflict that lasted from 1939 to 1945. It involved the vast majority of the world's countries and resulted in an estimated 70 to 85 million fatalities. It ended with the surrender of the Axis powers.",
+    },
   },
   {
+    id: "hist-3",
     title: "The American Revolution",
-    tools: ["Quiz"],
-    processedOn: "2024-01-10",
+    options: ["Quiz"],
+    processedOn: "January 10, 2024",
+    results: {
+      quiz: [
+        {
+          question: "When did the American Revolution begin?",
+          options: ["1776", "1775", "1783", "1812"],
+          answer: "1775",
+        },
+      ],
+    },
   },
   {
+    id: "hist-4",
     title: "Ancient Egypt",
-    tools: ["Summary", "Quiz"],
-    processedOn: "2024-01-08",
+    options: ["Summary", "Quiz"],
+    processedOn: "January 8, 2024",
+    results: {
+      summary: "Ancient Egypt was a civilization of ancient Northeastern Africa, concentrated along the lower reaches of the Nile River. Its history is marked by the construction of monumental pyramids and the reign of pharaohs.",
+      quiz: [
+        {
+          question: "What river was central to Ancient Egyptian civilization?",
+          options: ["Amazon River", "Yangtze River", "Mississippi River", "Nile River"],
+          answer: "Nile River",
+        },
+      ],
+    },
   },
   {
+    id: "hist-5",
     title: "The Industrial Revolution",
-    tools: ["Summary"],
-    dProcessedOn: "2024-01-05",
+    options: ["Summary"],
+    processedOn: "January 5, 2024",
+    results: {
+      summary: "The Industrial Revolution was the transition to new manufacturing processes in Europe and the United States, from about 1760 to sometime between 1820 and 1840. This transition included moving from hand production methods to machines.",
+    },
   },
   {
+    id: "hist-6",
     title: "The Space Race",
-    tools: ["Flashcards"],
-    processedOn: "2024-01-03",
+    options: ["Flashcards"],
+    processedOn: "January 3, 2024",
+    results: {
+      flashcards: [
+        {
+          front: "Sputnik 1",
+          back: "The first artificial Earth satellite, launched by the Soviet Union in 1957.",
+        },
+      ],
+    },
   },
   {
+    id: "hist-7",
     title: "The Scientific Method",
-    tools: ["Summary", "Flashcards"],
-    processedOn: "2024-01-01",
+    options: ["Summary", "Flashcards"],
+    processedOn: "January 1, 2024",
+    results: {
+      summary: "The Scientific Method is a systematic approach to research, which includes observing phenomena, formulating hypotheses, conducting experiments to test them, and analyzing the results to draw conclusions.",
+      flashcards: [
+        {
+          front: "Hypothesis",
+          back: "A proposed explanation made on the basis of limited evidence as a starting point for further investigation.",
+        },
+      ],
+    },
   },
 ];

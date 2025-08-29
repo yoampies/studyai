@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { RECENT_DOCUMENTS } from '../assets/constants';
+import { DUMMY_DOCUMENTS } from '../assets/constants'; // Import the dummy data
 
 const FileIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
@@ -19,6 +19,7 @@ const CaretRightIcon = () => (
 
 function History() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [documents, setDocuments] = useState([]);
   
   const filterFromUrl = searchParams.get('filter');
   let initialFilter = 'All';
@@ -32,6 +33,15 @@ function History() {
   const [activeFilter, setActiveFilter] = useState(initialFilter);
 
   useEffect(() => {
+    // Carga los documentos desde localStorage
+    const storedHistory = JSON.parse(localStorage.getItem('studyHistory')) || [];
+    
+    // Combina los datos de localStorage con los datos simulados
+    // Esto asegura que los documentos cargados por el usuario se muestren primero
+    const combinedDocuments = [...storedHistory, ...DUMMY_DOCUMENTS];
+    
+    setDocuments(combinedDocuments);
+
     let newFilter = 'All';
     const filterFromUrl = searchParams.get('filter');
     if (filterFromUrl) {
@@ -46,6 +56,7 @@ function History() {
     let urlFilterName = filterName.toLowerCase();
     if (urlFilterName === 'summary') urlFilterName = 'summaries';
     if (urlFilterName === 'quiz') urlFilterName = 'quizzes';
+    if (urlFilterName === 'flashcards') urlFilterName = 'flashcards';
     setSearchParams({ filter: urlFilterName });
   };
 
@@ -57,11 +68,11 @@ function History() {
     return `${baseClasses} bg-[#f1f0f4] text-[#131118]`;
   };
 
-  const filteredDocuments = RECENT_DOCUMENTS.filter(document => {
+  const filteredDocuments = documents.filter(document => {
     if (activeFilter === 'All') {
       return true;
     }
-    return document.tools.includes(activeFilter);
+    return document.options.includes(activeFilter);
   });
 
   return (
@@ -113,11 +124,11 @@ function History() {
             <h2 className="text-[#131118] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Recent Documents</h2>
 
             {filteredDocuments.length > 0 ? (
-              filteredDocuments.map((document, index) => (
+              filteredDocuments.map((document) => (
                 <Link 
-                  key={index} 
-                  to="/details/history" // Updated path to a more general "history" or similar.
-                  state={{ documentData: document }} // Pass the entire document object
+                  key={document.id} 
+                  to={`/details/${document.id}`} 
+                  state={{ analysis: document, results: document.results }}
                   className="flex gap-4 bg-white px-4 py-3 justify-between cursor-pointer hover:bg-gray-100 transition-colors duration-200"
                 >
                   <div className="flex items-start gap-4">
@@ -126,7 +137,7 @@ function History() {
                     </div>
                     <div className="flex flex-1 flex-col justify-center">
                       <p className="text-[#131118] text-base font-medium leading-normal">{document.title}</p>
-                      <p className="text-[#6e6388] text-sm font-normal leading-normal">Tools: {document.tools.join(', ')}</p>
+                      <p className="text-[#6e6388] text-sm font-normal leading-normal">Tools: {document.options.join(', ')}</p>
                       <p className="text-[#6e6388] text-sm font-normal leading-normal">Processed on: {document.processedOn}</p>
                     </div>
                   </div>

@@ -7,17 +7,67 @@ import { handlingOptions } from '../assets/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
+// Datos simulados para la respuesta de la IA
+const MOCK_AI_RESPONSES = {
+  "Summary": "Este es un resumen simulado de la IA. Cubre los puntos principales del texto/archivo de entrada, destacando los conceptos clave para un estudio eficiente.",
+  "Quiz": [
+    {
+      question: "¿Cuál es el concepto principal discutido en el texto?",
+      options: ["Concepto A", "Concepto B", "Concepto C", "Concepto D"],
+      answer: "Concepto B"
+    },
+    {
+      question: "¿Qué papel juega la tecnología en el tema?",
+      options: ["Acelera el proceso", "No tiene impacto", "Crea desafíos", "Resuelve todos los problemas"],
+      answer: "Crea desafíos"
+    }
+  ],
+  "Flashcards": [
+    {
+      front: "Término 1",
+      back: "Definición del Término 1. Este término se relaciona con..."
+    },
+    {
+      front: "Término 2",
+      back: "Definición del Término 2. Este término es fundamental para entender..."
+    }
+  ]
+};
+
+// Función asíncrona que simula el procesamiento de la IA
+const simulateAIProcessing = (options) => {
+  return new Promise(resolve => {
+    const delay = 2000 + Math.random() * 1000;
+    setTimeout(() => {
+      const results = {};
+      options.forEach(option => {
+        if (option === "Summary") {
+          results.summary = MOCK_AI_RESPONSES.Summary;
+        }
+        if (option === "Quiz") {
+          results.quiz = MOCK_AI_RESPONSES["Quiz"];
+        }
+        if (option === "Flashcards") {
+          results.flashcards = MOCK_AI_RESPONSES.Flashcards;
+        }
+      });
+      resolve(results);
+    }, delay);
+  });
+};
+
 function Upload() {
   const [tab, setTab] = useState("text");
   const [fileName, setFileName] = useState("");
   const [textInput, setTextInput] = useState("");
   const [processingOptions, setProcessingOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // Use the useLocation hook
-  const order = ['Summary', 'Multiple Choice Exam', 'Flashcards'];
+  const location = useLocation();
+
+  const order = handlingOptions;
 
   useEffect(() => {
-    // Check if the location state has a file property
     if (location.state && location.state.file) {
       setTab("file");
       setFileName(location.state.file);
@@ -60,8 +110,10 @@ function Upload() {
     return isInputProvided && isOptionSelected;
   };
 
-  const handleSubmitButton = () => {
+  const handleSubmitButton = async () => {
     if (isFormValid()) {
+      setIsLoading(true);
+
       const fileToAnalyse = tab === "file" ? fileName : null;
       const textToAnalyze = tab === "text" ? textInput : null;
       const analysisID = uuidv4();
@@ -72,7 +124,27 @@ function Upload() {
         text: textToAnalyze,
         options: processingOptions
       };
-      navigate(`/details/${analysisID}`, { state: { analysis } });
+
+      try {
+        const results = await simulateAIProcessing(processingOptions);
+        
+        const history = JSON.parse(localStorage.getItem('studyHistory')) || [];
+        const newHistory = [...history, {
+          ...analysis,
+          results,
+          title: fileToAnalyse || "New Text Analysis",
+          processedOn: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        }];
+        localStorage.setItem('studyHistory', JSON.stringify(newHistory));
+
+        setIsLoading(false);
+        navigate(`/details/${analysisID}`, { state: { analysis, results } });
+
+      } catch (error) {
+        console.error("Error during AI processing simulation:", error);
+        setIsLoading(false);
+        alert("An error occurred during processing.");
+      }
     } else {
       alert("Please enter text or upload a file and select at least one processing option.");
     }
@@ -99,7 +171,7 @@ function Upload() {
                     name="upload-option"
                     className="invisible w-0"
                     value="Text"
-                    checked={tab === "text"} // Use checked prop
+                    checked={tab === "text"}
                     onChange={() => handleTabChange("text")}
                   />
                 </label>
@@ -110,13 +182,21 @@ function Upload() {
                     name="upload-option"
                     className="invisible w-0"
                     value="Files"
-                    checked={tab === "file"} // Use checked prop
+                    checked={tab === "file"}
                     onChange={() => handleTabChange("file")}
                   />
                 </label>
               </div>
             </div>
-            <SectionRendering section={tab} onFileNameChange={handleFileChangeInParent} onTextInputChange={handleTextChangeInParent} fileName={fileName} textInput={textInput} />
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center h-48 py-3 px-4">
+                {/* Fixed the classname for Tailwind CSS animation */}
+                <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4 animate-spin"></div> 
+                <p className="text-[#131118] text-center text-lg font-normal leading-normal">Processing your content...</p>
+              </div>
+            ) : (
+              <SectionRendering section={tab} onFileNameChange={handleFileChangeInParent} onTextInputChange={handleTextChangeInParent} fileName={fileName} textInput={textInput} />
+            )}
             <h3 className="text-[#131118] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Processing Options</h3>
             <div className="px-4">
               {handlingOptions.map((option) => (
@@ -125,6 +205,8 @@ function Upload() {
                     type="checkbox"
                     className="h-5 w-5 rounded border-[#dedce5] border-2 bg-transparent text-[#4514b8] checked:bg-[#4514b8] checked:border-[#4514b8] checked:bg-[image:--checkbox-tick-svg] focus:ring-0 focus:ring-offset-0 focus:border-[#dedce5] focus:outline-none"
                     onChange={() => handleCheckboxChange(option)}
+                    disabled={isLoading}
+                    checked={processingOptions.includes(option)}
                   />
                   <p className="text-[#131118] text-base font-normal leading-normal">{option}</p>
                 </label>
@@ -132,9 +214,9 @@ function Upload() {
             </div>
             <div className="flex px-4 py-3 justify-end">
               <button
-                className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 text-white text-sm font-bold leading-normal tracking-[0.015em] ${isFormValid() ? 'bg-[#607afb]' : 'bg-[#c3c4c9] cursor-not-allowed'}`}
+                className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 text-white text-sm font-bold leading-normal tracking-[0.015em] ${isFormValid() && !isLoading ? 'bg-[#607afb]' : 'bg-[#c3c4c9] cursor-not-allowed'}`}
                 onClick={handleSubmitButton}
-                disabled={!isFormValid()}
+                disabled={!isFormValid() || isLoading}
               >
                 <span className="truncate">Submit</span>
               </button>
