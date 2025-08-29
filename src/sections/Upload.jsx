@@ -1,10 +1,10 @@
 // src/sections/Upload.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import SectionRendering from '../components/SectionRendering';
 import { handlingOptions } from '../assets/constants';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 function Upload() {
@@ -13,7 +13,16 @@ function Upload() {
   const [textInput, setTextInput] = useState("");
   const [processingOptions, setProcessingOptions] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation(); // Use the useLocation hook
   const order = ['Summary', 'Multiple Choice Exam', 'Flashcards'];
+
+  useEffect(() => {
+    // Check if the location state has a file property
+    if (location.state && location.state.file) {
+      setTab("file");
+      setFileName(location.state.file);
+    }
+  }, [location.state]);
 
   const handleTabChange = (state) => {
     setTab(state);
@@ -85,15 +94,29 @@ function Upload() {
               <div className="flex h-10 flex-1 items-center justify-center rounded-lg bg-[#f1f0f4] p-1">
                 <label className="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:shadow-[0_0_4px_rgba(0,0,0,0.1)] has-[:checked]:text-[#131118] text-[#6e6388] text-sm font-medium leading-normal">
                   <span className="truncate">Text</span>
-                  <input type="radio" name="7e26e5f1-5761-443c-a4e2-6e99b97f4455" className="invisible w-0" value="Text" defaultChecked onClick={() => handleTabChange("text")} />
+                  <input
+                    type="radio"
+                    name="upload-option"
+                    className="invisible w-0"
+                    value="Text"
+                    checked={tab === "text"} // Use checked prop
+                    onChange={() => handleTabChange("text")}
+                  />
                 </label>
                 <label className="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:shadow-[0_0_4px_rgba(0,0,0,0.1)] has-[:checked]:text-[#131118] text-[#6e6388] text-sm font-medium leading-normal">
                   <span className="truncate">Files</span>
-                  <input type="radio" name="7e26e5f1-5761-443c-a4e2-6e99b97f4455" className="invisible w-0" value="Files" onClick={() => handleTabChange("file")} />
+                  <input
+                    type="radio"
+                    name="upload-option"
+                    className="invisible w-0"
+                    value="Files"
+                    checked={tab === "file"} // Use checked prop
+                    onChange={() => handleTabChange("file")}
+                  />
                 </label>
               </div>
             </div>
-            <SectionRendering section={tab} onFileNameChange={handleFileChangeInParent} onTextInputChange={handleTextChangeInParent} />
+            <SectionRendering section={tab} onFileNameChange={handleFileChangeInParent} onTextInputChange={handleTextChangeInParent} fileName={fileName} textInput={textInput} />
             <h3 className="text-[#131118] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Processing Options</h3>
             <div className="px-4">
               {handlingOptions.map((option) => (

@@ -1,37 +1,36 @@
-import React, {useRef, useState, useEffect} from 'react'
+// src/components/SectionRendering.jsx
+import React, { useRef, useEffect } from 'react';
 
-function SectionRendering({ section, onFileNameChange, onTextInputChange }) {
+function SectionRendering({ section, onFileNameChange, onTextInputChange, fileName, textInput }) {
   const commonContainerClasses = "flex max-w-[960px] flex-wrap items-end gap-4 px-4 py-3";
   const fileRef = useRef(null);
-  const [fileName, setFileName] = useState("");
-  const [textInput, setTextInput] = useState("")
 
   const handleFileButtonClick = () => {
     fileRef.current.click();
-  }
+  };
 
   const handleTextChange = (event) => {
     const text = event.target.value;
-    setTextInput(text);
     onTextInputChange(text);
-  }
+  };
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files;
-    const name = selectedFile[0].name;
-    setFileName(name);
-    onFileNameChange(name);
-  }
+    if (selectedFile.length > 0) {
+      const name = selectedFile[0].name;
+      onFileNameChange(name);
+    }
+  };
 
   useEffect(() => {
-    if(section === "text") {
-      setFileName("");
-      onFileNameChange("")
+    if (section === "text") {
+      // Clear the fileName state in the parent when switching to text tab
+      onFileNameChange("");
     } else {
-      setTextInput("");
-      onTextInputChange("")
+      // Clear the textInput state in the parent when switching to file tab
+      onTextInputChange("");
     }
-  }, [section, onFileNameChange, onTextInputChange])
+  }, [section, onFileNameChange, onTextInputChange]);
 
   switch (section) {
     case ("text"):
@@ -40,10 +39,7 @@ function SectionRendering({ section, onFileNameChange, onTextInputChange }) {
           <label className="flex flex-col min-w-40 flex-1 h-48">
             <textarea
               placeholder="Enter text here"
-              className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden 
-                rounded-lg text-[#131118] focus:outline-0 focus:ring-0 border border-[#dedce5] bg-white 
-                focus:border-[#dedce5] min-h-36 placeholder:text-[#6e6388] p-[15px] text-base font-normal 
-                leading-normal"
+              className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#131118] focus:outline-0 focus:ring-0 border border-[#dedce5] bg-white focus:border-[#dedce5] min-h-36 placeholder:text-[#6e6388] p-[15px] text-base font-normal leading-normal"
               onChange={handleTextChange}
               value={textInput}
             ></textarea>
@@ -55,15 +51,15 @@ function SectionRendering({ section, onFileNameChange, onTextInputChange }) {
         <div className={commonContainerClasses}>
           <div className="flex flex-col items-center gap-6 rounded-lg border border-[#dedce5] p-6 w-full h-48">
             {fileName ? (
-                <div className="flex max-w-[980px] flex-col items-center gap-2">
-                    <p className="text-[#131118] text-lg font-semibold leading-tight tracking-[-0.015em] max-w-[480px] text-center">{fileName}</p>
-                    <p className="text-[#131118] text-sm font-normal leading-normal max-w-[480px] text-center">Ready to Analyze</p>
-                </div>
+              <div className="flex max-w-[980px] flex-col items-center gap-2">
+                <p className="text-[#131118] text-lg font-semibold leading-tight tracking-[-0.015em] max-w-[480px] text-center">{fileName}</p>
+                <p className="text-[#131118] text-sm font-normal leading-normal max-w-[480px] text-center">Ready to Analyze</p>
+              </div>
             ) : (
-             <div className="flex max-w-[980px] flex-col items-center gap-2">
-              <p className="text-[#131118] text-lg font-semibold leading-tight tracking-[-0.015em] max-w-[480px] text-center">Drag and drop files here</p>
-              <p className="text-[#131118] text-sm font-normal leading-normal max-w-[480px] text-center">Or</p>
-            </div>   
+              <div className="flex max-w-[980px] flex-col items-center gap-2">
+                <p className="text-[#131118] text-lg font-semibold leading-tight tracking-[-0.015em] max-w-[480px] text-center">Drag and drop files here</p>
+                <p className="text-[#131118] text-sm font-normal leading-normal max-w-[480px] text-center">Or</p>
+              </div>
             )}
             <button
               onClick={handleFileButtonClick}
@@ -72,11 +68,11 @@ function SectionRendering({ section, onFileNameChange, onTextInputChange }) {
               <span className="truncate">{fileName ? "Choose Another File" : "Browse Files"}</span>
             </button>
             <input 
-                type="file" 
-                ref={fileRef}
-                onChange={handleFileChange}
-                className="hidden"
-                accept='.mp3, .pdf'
+              type="file" 
+              ref={fileRef}
+              onChange={handleFileChange}
+              className="hidden"
+              accept='.mp3, .pdf'
             />
           </div>
           <p className="text-[#6e6388] text-sm font-normal leading-normal text-center w-full">Supported file types: PDF, MP3</p>

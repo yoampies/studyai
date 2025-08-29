@@ -41,12 +41,15 @@ function TabRendering({tab}) {
                     <div className="flex w-full flex-1 items-stretch rounded-lg h-full">
                     <input
                         placeholder="Ask me anything about this summary..."
-                        className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#131118] focus:outline-0 focus:ring-0 border-none bg-[#f1f0f4] focus:border-none h-full placeholder:text-[#6e6388] px-4 rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
+                        className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#131118] 
+                        focus:outline-0 focus:ring-0 border-none bg-[#f1f0f4] focus:border-none h-full placeholder:text-[#6e6388] 
+                        px-4 rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
                     />
                     <div className="flex border-none bg-[#f1f0f4] items-center justify-center pr-4 rounded-r-lg border-l-0 !pr-2">
                         <div className="flex items-center gap-4 justify-end">
                         <button
-                            className="min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#4514b8] text-white text-sm font-medium leading-normal hidden @[480px]:block"
+                            className="min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 
+                            px-4 bg-[#607afb] text-white text-sm font-medium leading-normal hidden @[480px]:block"
                         >
                             <span className="truncate">Send</span>
                         </button>
