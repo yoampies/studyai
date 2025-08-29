@@ -1,11 +1,10 @@
-// src/sections/Upload.jsx
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import SectionRendering from '../components/SectionRendering';
 import { handlingOptions } from '../assets/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { gsap } from 'gsap';
 
 // Datos simulados para la respuesta de la IA
 const MOCK_AI_RESPONSES = {
@@ -45,7 +44,7 @@ const simulateAIProcessing = (options) => {
           results.summary = MOCK_AI_RESPONSES.Summary;
         }
         if (option === "Quiz") {
-          results.quiz = MOCK_AI_RESPONSES["Quiz"];
+          results.quiz = MOCK_AI_RESPONSes["Quiz"];
         }
         if (option === "Flashcards") {
           results.flashcards = MOCK_AI_RESPONSES.Flashcards;
@@ -64,6 +63,7 @@ function Upload() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const loaderRef = useRef(null);
 
   const order = handlingOptions;
 
@@ -73,6 +73,17 @@ function Upload() {
       setFileName(location.state.file);
     }
   }, [location.state]);
+
+  useEffect(() => {
+    if (isLoading && loaderRef.current) {
+      gsap.to(loaderRef.current, {
+        rotation: 360,
+        duration: 1.2,
+        repeat: -1,
+        ease: "linear",
+      });
+    }
+  }, [isLoading]);
 
   const handleTabChange = (state) => {
     setTab(state);
@@ -190,8 +201,7 @@ function Upload() {
             </div>
             {isLoading ? (
               <div className="flex flex-col items-center justify-center h-48 py-3 px-4">
-                {/* Fixed the classname for Tailwind CSS animation */}
-                <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4 animate-spin"></div> 
+                <div ref={loaderRef} className="spinner h-12 w-12 mb-4"></div>
                 <p className="text-[#131118] text-center text-lg font-normal leading-normal">Processing your content...</p>
               </div>
             ) : (

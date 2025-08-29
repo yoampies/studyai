@@ -24,10 +24,8 @@ function SectionRendering({ section, onFileNameChange, onTextInputChange, fileNa
 
   useEffect(() => {
     if (section === "text") {
-      // Clear the fileName state in the parent when switching to text tab
       onFileNameChange("");
     } else {
-      // Clear the textInput state in the parent when switching to file tab
       onTextInputChange("");
     }
   }, [section, onFileNameChange, onTextInputChange]);
