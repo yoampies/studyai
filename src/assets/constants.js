@@ -115,3 +115,31 @@ export const flashcards = [
     answer: 'Its impact is complex, requiring a balanced and critical approach.',
   },
 ];
+
+export const RECENT_DOCUMENTS = [
+  {
+    title: "The Renaissance",
+    tools: "Summary, Quiz",
+    processedOn: "2024-01-15",
+  },
+  {
+    title: "World War II",
+    tools: "Summary",
+    processedOn: "2024-01-12",
+  },
+  {
+    title: "The American Revolution",
+    tools: "Quiz",
+    processedOn: "2024-01-10",
+  },
+  {
+    title: "Ancient Egypt",
+    tools: "Summary, Quiz",
+    processedOn: "2024-01-08",
+  },
+  {
+    title: "The Industrial Revolution",
+    tools: "Summary",
+    processedOn: "2024-01-05",
+  },
+];
