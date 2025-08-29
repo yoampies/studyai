@@ -5,7 +5,7 @@ import flashcardImg from './img/flashcard.png';
 import summaryImg from './img/summary.png';
 
 export const recentAnalyses = {
-  exams: [
+  quizzes: [
     {
       id: uuidv4(),
       name: 'Examen de Matemáticas',
@@ -35,9 +35,9 @@ export const recentAnalyses = {
 };
 
 export const handlingOptions = [
-    "Multiple Choice Exam",
+    "Summary",
     "Flashcards",
-    "Summary"
+    "Quiz"
 ]
 
 export const exam_questions = [
@@ -119,27 +119,37 @@ export const flashcards = [
 export const RECENT_DOCUMENTS = [
   {
     title: "The Renaissance",
-    tools: "Summary, Quiz",
+    tools: ["Summary", "Quiz"],
     processedOn: "2024-01-15",
   },
   {
     title: "World War II",
-    tools: "Summary",
+    tools: ["Summary"],
     processedOn: "2024-01-12",
   },
   {
     title: "The American Revolution",
-    tools: "Quiz",
+    tools: ["Quiz"],
     processedOn: "2024-01-10",
   },
   {
     title: "Ancient Egypt",
-    tools: "Summary, Quiz",
+    tools: ["Summary", "Quiz"],
     processedOn: "2024-01-08",
   },
   {
     title: "The Industrial Revolution",
-    tools: "Summary",
-    processedOn: "2024-01-05",
+    tools: ["Summary"],
+    dProcessedOn: "2024-01-05",
+  },
+  {
+    title: "The Space Race",
+    tools: ["Flashcards"],
+    processedOn: "2024-01-03",
+  },
+  {
+    title: "The Scientific Method",
+    tools: ["Summary", "Flashcards"],
+    processedOn: "2024-01-01",
   },
 ];

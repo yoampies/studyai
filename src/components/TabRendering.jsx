@@ -57,7 +57,7 @@ function TabRendering({tab}) {
                 </div>
             </>
         )
-        case ("Multiple Choice Exam"):
+        case ("Quiz"):
             return <MCE />;
         case ("Flashcards"):
         return <Flashcards />;

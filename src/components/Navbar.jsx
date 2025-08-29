@@ -13,9 +13,11 @@ function Navbar() {
             ></path>
           </svg>
         </div>
-        <h2 className="text-[#131118] text-lg font-bold leading-tight tracking-[-0.015em]">
-          StudySmart
-        </h2>
+        <a href="/">
+          <h2 className="text-[#131118] text-lg font-bold leading-tight tracking-[-0.015em]">
+            StudySmart
+          </h2>
+        </a>
       </div>
       <div className="flex flex-1 justify-end gap-8">
         <div className="flex items-center gap-9">
