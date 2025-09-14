@@ -1,12 +1,33 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# StudyAI
 
-Currently, two official plugins are available:
+StudyAI is a modern web application designed to help students and lifelong learners analyze, summarize, and interact with study materials using AI-powered tools. Upload files or input text, and generate summaries, quizzes, and flashcards to enhance your learning experience. The mobile version is still being built.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **File & Text Upload:** Easily upload documents or paste text for analysis.
+- **AI-Powered Summaries:** Get concise summaries of your study materials.
+- **Quiz Generation:** Automatically create quizzes to test your understanding.
+- **Flashcards:** Generate flashcards for efficient review and memorization.
+- **Recent History:** Access previously analyzed files and results.
+- **Responsive Dashboard:** Intuitive UI for managing your study workflow.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Technologies Used
+
+- **React**: Frontend library for building user interfaces
+- **Vite**: Fast development and build tool
+- **Tailwind CSS**: Utility-first CSS framework for styling
+- **React Router**: Client-side routing
+- **GSAP**: Animation library for smooth UI transitions
+- **UUID**: Unique ID generation for analyses and flashcards
+
+## Project Structure
+
+- `src/` - Main source code
+  - `components/` - Reusable UI components (Navbar, Files, Flashcards, etc.)
+  - `sections/` - Main app sections (Home, Upload, DocDetails, History)
+  - `assets/` - Static assets and constants
+- `public/` - Static files
+- `index.html` - App entry point
+- `vite.config.js` - Vite configuration
+- `vercel.json` - Vercel deployment config
