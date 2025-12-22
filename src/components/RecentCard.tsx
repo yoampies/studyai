@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import { recentAnalyses } from '../assets/constants'
 
@@ -22,7 +21,6 @@ function RecentCard() {
                     <p className="text-[#5f668c] text-sm font-normal leading-normal">{item.date}</p>
                     <p className="text-[#5f668c] text-sm font-normal leading-normal">{item.description}</p>
                   </div>
-                  {/* Usa un Link y pasa el filtro de tipo como query param */}
                   <Link
                     to={`/history?filter=${type}`}
                     className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden 

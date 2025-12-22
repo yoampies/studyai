@@ -1,6 +1,3 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-
 function Navbar() {
   return (
     <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f1f0f4] px-10 py-3">
