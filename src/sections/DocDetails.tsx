@@ -1,116 +1,111 @@
-// src/sections/DocDetails.tsx
-import React, { useEffect, useState } from 'react';
-import { useLocation, Link, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import { Worker, Viewer } from '@react-pdf-viewer/core';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+
 import Navbar from '../components/Navbar';
 import TabRendering from '../components/TabRendering';
-import { DUMMY_DOCUMENTS } from '../assets/constants';
-import { 
-  IAnalysis, 
-  IAnalysisResults, 
-  IDocDetailsNavigationState, 
-  ProcessingOption 
-} from '../core/types';
+import { IDocDetailsNavigationState, ProcessingOption } from '../core/types';
 
-function DocDetails() {
+interface ExtendedNavigationState extends IDocDetailsNavigationState {
+  fileObject?: File;
+}
+
+const DocDetails: React.FC = () => {
   const location = useLocation();
-  const { docId } = useParams<{ docId: string }>();
-  
-  const [analysisData, setAnalysisData] = useState<IAnalysis | null>(null);
-  const [resultsData, setResultsData] = useState<IAnalysisResults | null>(null);
-  const [activeTool, setActiveTool] = useState<ProcessingOption | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const state = location.state as ExtendedNavigationState;
+
+  // Corrección: Tipado explícito en lugar de string genérico
+  const [activeTool, setActiveTool] = useState<ProcessingOption>('Summary');
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   useEffect(() => {
-    const fetchDocument = () => {
-      const state = location.state as IDocDetailsNavigationState;
-      if (state?.analysis) {
-        updateStates(state.analysis, state.results);
-        return;
-      }
+    if (state?.fileObject) {
+      const url = URL.createObjectURL(state.fileObject);
+      setPdfUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [state?.fileObject]);
 
-      if (docId) {
-        const storedHistory: IAnalysis[] = JSON.parse(localStorage.getItem('studyHistory') || '[]');
-        const allDocs = [...storedHistory, ...DUMMY_DOCUMENTS];
-        const found = allDocs.find(doc => doc.id === docId);
-
-        if (found) {
-          updateStates(found, found.results);
-        }
-      }
-      setLoading(false);
-    };
-
-    const updateStates = (analysis: IAnalysis, results: IAnalysisResults) => {
-      setAnalysisData(analysis);
-      setResultsData(results);
-      
-      if (analysis.options.includes('Summary')) {
-        setActiveTool('Summary');
-      } else if (analysis.options.length > 0) {
-        setActiveTool(analysis.options[0]);
-      }
-      setLoading(false);
-    };
-
-    fetchDocument();
-  }, [location.state, docId]);
-
-  if (loading) {
+  if (!state?.analysis) {
     return (
-      <div className="flex justify-center items-center h-screen bg-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#607afb]"></div>
-      </div>
-    );
-  }
-
-  if (!analysisData) {
-    return (
-      <div className="flex justify-center items-center h-screen flex-col p-4 bg-white text-center">
-        <h1 className="text-[#131118] text-2xl font-bold mb-6">Analysis not found</h1>
-        <Link 
-          to="/history"
-          className="min-w-[150px] rounded-lg h-10 px-4 bg-[#607afb] text-white font-bold flex items-center justify-center hover:bg-[#4a63e0] transition-colors"
-        >
-          Back to History
+      <div className="p-20 text-center">
+        No data found.{' '}
+        <Link to="/history" className="text-blue-500">
+          Go back
         </Link>
       </div>
     );
   }
 
+  const { analysis, results } = state;
+
   return (
-    <div className="relative flex size-full min-h-screen flex-col bg-white overflow-x-hidden font-inter">
+    <div className="flex flex-col h-screen bg-white font-inter">
       <Navbar />
-      <div className="px-4 md:px-40 flex flex-1 justify-center py-5">
-        <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
-          <div className="flex flex-wrap justify-between gap-3 p-4">
-            <h1 className="text-[#131118] text-[32px] font-bold leading-tight">
-              {analysisData.title}
-            </h1>
+
+      <div className="flex flex-1 overflow-hidden">
+        <div className="hidden lg:flex flex-[1.2] flex-col border-r border-[#dedce5] bg-[#525659]">
+          <div className="bg-white p-4 border-b border-[#dedce5] flex justify-between items-center">
+            <h2 className="font-bold text-[#131118] truncate">{analysis.title}</h2>
           </div>
 
-          <div className="pb-3">
-            <div className="flex border-b border-[#dedce5] px-4 gap-8">
-              {analysisData.options.map((tool) => (
-                <button
-                  key={tool}
-                  className={`flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4 cursor-pointer transition-all ${
-                    tool === activeTool ? "border-b-[#131118] text-[#131118]" : "border-b-transparent text-[#6e6388]"
-                  }`}
-                  onClick={() => setActiveTool(tool)}
-                >
-                  <span className="text-sm font-bold uppercase tracking-wider">{tool}</span>
-                </button>
-              ))}
-            </div>
+          <div className="flex-1 overflow-hidden relative">
+            {analysis.type === 'file' ? (
+              pdfUrl ? (
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+                  <Viewer fileUrl={pdfUrl} plugins={[defaultLayoutPluginInstance]} />
+                </Worker>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-white p-10 text-center">
+                  <p className="text-lg font-medium">Original PDF not in memory.</p>
+                  <p className="text-sm opacity-70">
+                    For security, PDFs are not saved in local storage. Please re-upload from Home to
+                    view side-by-side.
+                  </p>
+                </div>
+              )
+            ) : (
+              <div className="bg-white h-full p-8 overflow-y-auto">
+                <h3 className="text-xs font-bold text-[#6e6388] uppercase tracking-widest mb-4">
+                  Original Input
+                </h3>
+                <p className="text-[#131118] leading-relaxed whitespace-pre-wrap">
+                  {analysis.text}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex-1 flex flex-col min-w-[400px] bg-white">
+          <div className="flex border-b border-[#dedce5] bg-white sticky top-0 z-10">
+            {analysis.options.map((option) => (
+              <button
+                key={option}
+                onClick={() => setActiveTool(option)}
+                className={`flex-1 py-4 text-sm font-bold transition-all border-b-2 ${
+                  activeTool === option
+                    ? 'border-[#607afb] text-[#131118]'
+                    : 'border-transparent text-[#6e6388]'
+                }`}
+              >
+                {option}
+              </button>
+            ))}
           </div>
 
-          <main className="flex-1">
-            <TabRendering tab={activeTool} results={resultsData} />
-          </main>
+          <div className="flex-1 overflow-y-auto">
+            <TabRendering tab={activeTool} results={results} />
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default DocDetails;

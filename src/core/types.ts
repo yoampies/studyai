@@ -1,6 +1,6 @@
 export type AnalysisType = 'text' | 'file';
-export type ProcessingOption = "Summary" | "Flashcards" | "Quiz";
-export type HistoryFilter = ProcessingOption | "All";
+export type ProcessingOption = 'Summary' | 'Flashcards' | 'Quiz';
+export type HistoryFilter = ProcessingOption | 'All';
 
 export interface IQuizOption {
   text: string;
@@ -35,7 +35,6 @@ export interface IAnalysis {
   results: IAnalysisResults;
   processedOn: string;
 }
-
 export interface IFlashcardsProps {
   flashcards: IFlashcard[];
 }
@@ -45,13 +44,13 @@ export interface IMCEProps {
 }
 
 export interface ITabRenderingProps {
-  tab: string | null;
+  tab: ProcessingOption | null;
   results: IAnalysisResults | null;
 }
 
 export interface ISectionRenderingProps {
   section: AnalysisType;
-  onFileNameChange: (name: string) => void;
+  onFileNameChange: (name: string, file?: File) => void;
   onTextInputChange: (text: string) => void;
   fileName: string;
   textInput: string;
@@ -72,4 +71,17 @@ export interface IUploadNavigationState {
 export interface IDocDetailsNavigationState {
   analysis: IAnalysis;
   results: IAnalysisResults;
+}
+
+export type AsyncSummaryGenerator = AsyncGenerator<string, void, unknown>;
+
+export interface WorkerInput {
+  file: File;
+}
+
+export interface WorkerOutput {
+  success: boolean;
+  content: string;
+  fileName: string;
+  error?: string;
 }
