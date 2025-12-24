@@ -60,7 +60,7 @@ const SectionRendering: React.FC<ISectionRenderingProps> = ({
             ref={fileRef}
             onChange={handleFileChange}
             className="hidden"
-            accept=".mp3, .pdf, .txt"
+            accept=".mp3,audio/mpeg,audio/wav,application/pdf,.txt"
           />
         </div>
       )}
