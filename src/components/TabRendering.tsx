@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import MCE from './MCE';
 import Flashcards from './Flashcards';
 import { ITabRenderingProps, AsyncSummaryGenerator } from '../core/types';
-import { simulateSummaryStreaming } from '../sections/Upload';
+import { simulateSummaryStreaming } from '../core/simulation';
 
 const TabRendering: React.FC<ITabRenderingProps> = ({ tab, results }) => {
   const [streamingSummary, setStreamingSummary] = useState('');
@@ -22,9 +22,11 @@ const TabRendering: React.FC<ITabRenderingProps> = ({ tab, results }) => {
       startStreaming(results.summary, currentId);
     }
 
-    // 3. Cleanup: Si el usuario cambia de tab rápido, invalidamos el proceso
+    // 3. Cleanup: Solo invalidamos la referencia, NO la reseteamos a 0.
+    // Al no resetear a 0, garantizamos que el ID siempre suba y evitamos
+    // colisiones en React StrictMode.
     return () => {
-      executionIdRef.current = 0;
+      // ELIMINADO: executionIdRef.current = 0;
     };
   }, [tab, results?.summary]);
 
@@ -36,8 +38,6 @@ const TabRendering: React.FC<ITabRenderingProps> = ({ tab, results }) => {
 
       for await (const word of generator) {
         // 4. CHECK DE SEGURIDAD:
-        // Si el ID de este proceso no coincide con el ID actual del componente, abortamos.
-        // Esto mata silenciosamente la ejecución "fantasma" del Strict Mode.
         if (processId !== executionIdRef.current) {
           return;
         }
@@ -47,7 +47,6 @@ const TabRendering: React.FC<ITabRenderingProps> = ({ tab, results }) => {
     } catch (error) {
       console.error('Streaming error:', error);
     } finally {
-      // Solo quitamos el loading si este proceso sigue siendo el válido
       if (processId === executionIdRef.current) {
         setIsStreaming(false);
       }

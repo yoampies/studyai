@@ -4,33 +4,38 @@ import Files from '../components/Files';
 import Searchbar from '../components/Searchbar';
 import RecentCard from '../components/RecentCard';
 import { Link } from 'react-router-dom';
-import { IUploadNavigationState } from '../core/types';
+import { IDocDetailsNavigationState } from '../core/types';
+import { useStudyStore } from '../core/store/useStudy';
 
 const Home: React.FC = () => {
-  
-  const renderRecentFileLink = (fileName: string) => {
-    const state: IUploadNavigationState = { file: fileName };
-    return (
-      <Link to="/upload" state={state}>
-        <Files title={fileName} />
-      </Link>
-    );
-  };
+  const history = useStudyStore((state) => state.history);
 
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-white overflow-x-hidden font-inter">
       <div className="layout-container flex h-full grow flex-col">
         <Navbar />
-        
+
         <div className="gap-1 px-6 flex flex-1 justify-center">
           <aside className="layout-content-container flex flex-col w-80">
             <h2 className="text-[#111218] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
               Recent Files
             </h2>
             <nav className="flex flex-col gap-1">
-              {renderRecentFileLink("Chapter One Notes")}
-              {renderRecentFileLink("Lecture Slides")}
-              {renderRecentFileLink("Textbook Excerpts")}
+              {/* Renderizado dinámico del historial en lugar de links fijos */}
+              {history.length > 0 ? (
+                history.slice(0, 5).map((file) => (
+                  <Link
+                    key={file.id}
+                    to={`/details/${file.id}`}
+                    // Pasamos el estado necesario para que DocDetails funcione
+                    state={{ analysis: file, results: file.results } as IDocDetailsNavigationState}
+                  >
+                    <Files title={file.title} />
+                  </Link>
+                ))
+              ) : (
+                <p className="px-4 text-sm text-[#6e6388] italic">No recent files yet.</p>
+              )}
             </nav>
           </aside>
 
@@ -38,7 +43,7 @@ const Home: React.FC = () => {
             <h1 className="text-[#111218] tracking-light text-[32px] font-bold leading-tight px-4 text-left pb-3 pt-5">
               Dashboard
             </h1>
-            
+
             <div className="px-4 py-3">
               <Searchbar text="Search for created elements" />
             </div>
@@ -46,7 +51,7 @@ const Home: React.FC = () => {
             <h2 className="text-[#111218] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-4">
               Recently Accessed
             </h2>
-            
+
             <RecentCard />
 
             <div className="flex px-4 py-3 justify-start">
@@ -59,7 +64,7 @@ const Home: React.FC = () => {
                 <span className="truncate">Upload a file</span>
               </Link>
             </div>
-            
+
             <div className="w-full h-[20px]"></div>
           </main>
         </div>
