@@ -7,52 +7,16 @@ import SectionRendering from '../components/SectionRendering';
 import { useStudyStore } from '../core/store/useStudy';
 import {
   IAnalysis,
-  IAnalysisResults,
   AnalysisType,
   ProcessingOption,
-  AsyncSummaryGenerator,
   WorkerInput,
   WorkerOutput,
 } from '../core/types';
+import { simulateAIProcessing } from '../core/simulation';
 import FileWorker from '../core/workers/fileParser.worker?worker';
-
-const MOCK_AI_RESPONSES: IAnalysisResults = {
-  summary:
-    'Este es un resumen simulado de la IA. Cubre los puntos principales destacando conceptos clave.',
-  quiz: [
-    { id: uuidv4(), questionText: '¿Concepto A?', options: [{ text: 'Sí', isCorrect: true }] },
-  ],
-  flashcards: [{ id: uuidv4(), front: 'Pregunta', back: 'Respuesta' }],
-};
-
-// ... (Las funciones auxiliares las dejamos aquí por ahora para no romper imports en TabRendering,
-// aunque lo ideal es moverlas a un archivo 'utils.ts' después del push)
-
-export async function* simulateSummaryStreaming(fullText: string): AsyncSummaryGenerator {
-  const words = fullText.split(' ');
-  for (const word of words) {
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    yield word + ' ';
-  }
-}
-
-const simulateAIProcessing = async (options: ProcessingOption[]): Promise<IAnalysisResults> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const results: IAnalysisResults = {};
-      options.forEach((opt) => {
-        if (opt === 'Summary') results.summary = MOCK_AI_RESPONSES.summary;
-        if (opt === 'Quiz') results.quiz = MOCK_AI_RESPONSES.quiz;
-        if (opt === 'Flashcards') results.flashcards = MOCK_AI_RESPONSES.flashcards;
-      });
-      resolve(results);
-    }, 2000);
-  });
-};
 
 const Upload: React.FC = () => {
   const navigate = useNavigate();
-  // const location = useLocation(); // Eliminado porque no se usaba en este scope
   const addAnalysis = useStudyStore((state) => state.addAnalysis);
 
   const [tab, setTab] = useState<AnalysisType>('text');
