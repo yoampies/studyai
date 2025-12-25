@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import * as pdfjsLib from 'pdfjs-dist';
 
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
@@ -9,7 +10,7 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import Navbar from '../components/Navbar';
 import TabRendering from '../components/TabRendering';
 import AudioVisualizer from '../components/AudioVisualizer';
-import ErrorBoundary from '../components/ErrorBoundary'; // Importación
+import ErrorBoundary from '../components/ErrorBoundary';
 import { IDocDetailsNavigationState, ProcessingOption } from '../core/types';
 
 interface ExtendedNavigationState extends IDocDetailsNavigationState {
@@ -61,7 +62,9 @@ const DocDetails: React.FC = () => {
               {analysis.type === 'file' ? (
                 <>
                   {state.fileObject?.type === 'application/pdf' && pdfUrl ? (
-                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.min.js">
+                    <Worker
+                      workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`}
+                    >
                       <Viewer fileUrl={pdfUrl} plugins={[defaultLayoutPluginInstance]} />
                     </Worker>
                   ) : state.fileObject?.type.includes('audio') ? (

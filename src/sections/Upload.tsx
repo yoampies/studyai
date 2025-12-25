@@ -113,12 +113,19 @@ const Upload: React.FC = () => {
 
           <div className="min-h-[200px]">
             {isLoading ? (
-              <div className="flex flex-col items-center justify-center h-48">
+              <div
+                className="flex flex-col items-center justify-center h-48"
+                role="status"
+                aria-live="polite"
+              >
                 <div
                   ref={loaderRef}
                   className="h-12 w-12 border-4 border-t-[#607afb] border-[#f1f0f4] rounded-full animate-spin"
+                  aria-hidden="true"
                 ></div>
-                <p className="mt-4 font-medium text-[#6e6388]">Processing content...</p>
+                <p className="mt-4 font-medium text-[#6e6388]">
+                  Processing content... your study material will be ready in a moment.
+                </p>
               </div>
             ) : (
               <SectionRendering

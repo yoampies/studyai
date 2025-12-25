@@ -1,5 +1,5 @@
 /* src/index.css */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 .card-face {
   position: absolute;
@@ -13,7 +13,9 @@
   justify-content: center;
   padding: 1rem;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .card-front {
@@ -39,4 +41,22 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Soporte para Flashcards 3D */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
 }
