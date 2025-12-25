@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "bundler", /* Cambia de 'nodenext' a 'bundler' */
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "noEmit": true, /* Vite se encarga de la compilación */
+    "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
     "isolatedModules": true,
@@ -15,5 +16,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "src/test/setup.ts"]
 }
