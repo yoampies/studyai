@@ -63,8 +63,5 @@
     "*.{json,css,md}": [
       "prettier --write"
     ]
-  },
-  "overrides": {
-    "pdfjs-dist": "^4.2.67"
   }
 }
