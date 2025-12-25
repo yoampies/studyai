@@ -8,9 +8,9 @@ const DocDetails = lazy(() => import('./sections/DocDetails'));
 const History = lazy(() => import('./sections/History'));
 
 const PageLoader = () => (
-  <div className="flex h-screen w-full flex-col items-center justify-center bg-white">
-    <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#607afb] border-t-transparent"></div>
-    <p className="mt-4 text-[#6e6388]">Cargando sección...</p>
+  <div className="flex h-screen w-full flex-col items-center justify-center bg-white font-inter">
+    <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#607afb] border-t-transparent"></div>
+    <p className="mt-4 font-medium text-[#6e6388]">Loading section...</p>
   </div>
 );
 
