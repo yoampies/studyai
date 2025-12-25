@@ -9,6 +9,7 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import Navbar from '../components/Navbar';
 import TabRendering from '../components/TabRendering';
 import AudioVisualizer from '../components/AudioVisualizer';
+import ErrorBoundary from '../components/ErrorBoundary'; // Importación
 import { IDocDetailsNavigationState, ProcessingOption } from '../core/types';
 
 interface ExtendedNavigationState extends IDocDetailsNavigationState {
@@ -24,7 +25,6 @@ const DocDetails: React.FC = () => {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   useEffect(() => {
-    // Si el archivo es un PDF, generamos la URL para el visualizador
     if (state?.fileObject && state.fileObject.type === 'application/pdf') {
       const url = URL.createObjectURL(state.fileObject);
       setPdfUrl(url);
@@ -50,51 +50,49 @@ const DocDetails: React.FC = () => {
       <Navbar />
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Panel Izquierdo: Visualizador de contenido original */}
+        {/* Panel Izquierdo: Error Boundary para Visualizador Original */}
         <div className="hidden lg:flex flex-[1.2] flex-col border-r border-[#dedce5] bg-[#525659]">
           <div className="bg-white p-4 border-b border-[#dedce5] flex justify-between items-center">
             <h2 className="font-bold text-[#131118] truncate">{analysis.title}</h2>
           </div>
 
           <div className="flex-1 overflow-hidden relative">
-            {analysis.type === 'file' ? (
-              <>
-                {/* Caso 1: Es un PDF y tenemos el archivo en memoria */}
-                {state.fileObject?.type === 'application/pdf' && pdfUrl ? (
-                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.min.js">
-                    <Viewer fileUrl={pdfUrl} plugins={[defaultLayoutPluginInstance]} />
-                  </Worker>
-                ) : /* Caso 2: Es un Audio (MP3) y tenemos el archivo */
-                state.fileObject?.type.includes('audio') ? (
-                  <div className="h-full flex items-center justify-center bg-[#f1f0f4] p-10">
-                    <AudioVisualizer file={state.fileObject} />
-                  </div>
-                ) : (
-                  /* Caso 3: No hay archivo en memoria (Estado persistido de History sin File) */
-                  <div className="flex flex-col items-center justify-center h-full text-white p-10 text-center">
-                    <p className="text-lg font-medium">Original file not in memory.</p>
-                    <p className="text-sm opacity-70">
-                      For security, files are not saved in local storage. Please re-upload from Home
-                      to view side-by-side.
-                    </p>
-                  </div>
-                )}
-              </>
-            ) : (
-              /* Caso 4: Es entrada de texto plano */
-              <div className="bg-white h-full p-8 overflow-y-auto">
-                <h3 className="text-xs font-bold text-[#6e6388] uppercase tracking-widest mb-4">
-                  Original Input
-                </h3>
-                <p className="text-[#131118] leading-relaxed whitespace-pre-wrap">
-                  {analysis.text}
-                </p>
-              </div>
-            )}
+            <ErrorBoundary componentName="Original Content Viewer">
+              {analysis.type === 'file' ? (
+                <>
+                  {state.fileObject?.type === 'application/pdf' && pdfUrl ? (
+                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.min.js">
+                      <Viewer fileUrl={pdfUrl} plugins={[defaultLayoutPluginInstance]} />
+                    </Worker>
+                  ) : state.fileObject?.type.includes('audio') ? (
+                    <div className="h-full flex items-center justify-center bg-[#f1f0f4] p-10">
+                      <AudioVisualizer file={state.fileObject} />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full text-white p-10 text-center">
+                      <p className="text-lg font-medium">Original file not in memory.</p>
+                      <p className="text-sm opacity-70">
+                        For security, files are not saved in local storage. Please re-upload from
+                        Home to view side-by-side.
+                      </p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="bg-white h-full p-8 overflow-y-auto">
+                  <h3 className="text-xs font-bold text-[#6e6388] uppercase tracking-widest mb-4">
+                    Original Input
+                  </h3>
+                  <p className="text-[#131118] leading-relaxed whitespace-pre-wrap">
+                    {analysis.text}
+                  </p>
+                </div>
+              )}
+            </ErrorBoundary>
           </div>
         </div>
 
-        {/* Panel Derecho: Herramientas de IA (Summary, Quiz, Flashcards) */}
+        {/* Panel Derecho: Error Boundary para Herramientas de IA */}
         <div className="flex-1 flex flex-col min-w-[400px] bg-white">
           <div className="flex border-b border-[#dedce5] bg-white sticky top-0 z-10">
             {analysis.options.map((option) => (
@@ -113,7 +111,9 @@ const DocDetails: React.FC = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            <TabRendering tab={activeTool} results={results} />
+            <ErrorBoundary componentName="AI Results Viewer">
+              <TabRendering tab={activeTool} results={results} />
+            </ErrorBoundary>
           </div>
         </div>
       </div>

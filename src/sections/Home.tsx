@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import Files from '../components/Files';
 import Searchbar from '../components/Searchbar';
 import RecentCard from '../components/RecentCard';
+import ErrorBoundary from '../components/ErrorBoundary'; // Importación del nuevo componente
 import { Link } from 'react-router-dom';
 import { IDocDetailsNavigationState, IHeatmapValue } from '../core/types';
 import { useStudyStore } from '../core/store/useStudy';
@@ -33,7 +34,6 @@ const Home: React.FC = () => {
   const heatmapValues = useMemo(() => {
     return history.reduce((acc: IHeatmapValue[], item) => {
       const rawDate = item.processedOn ? new Date(item.processedOn) : null;
-
       if (!rawDate || isNaN(rawDate.getTime())) return acc;
 
       const dateStr = rawDate.toISOString().split('T')[0];
@@ -120,92 +120,103 @@ const Home: React.FC = () => {
             <div className="w-full h-[20px]"></div>
 
             <div className="flex flex-wrap gap-4 px-4 py-6">
-              <div className="min-w-[300px] flex-1 bg-white p-6 rounded-xl border border-[#f1f0f4] shadow-sm">
-                <h3 className="text-[#111218] text-lg font-bold mb-4">Study Progress</h3>
-                <div className="h-[200px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={progressData}>
-                      <defs>
-                        <linearGradient id="colorFiles" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#607afb" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#607afb" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f0f4" />
-                      <XAxis
-                        dataKey="name"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fill: '#6e6388', fontSize: 12 }}
-                      />
-                      <YAxis hide />
-                      <RechartsTooltip />
-                      <Area
-                        type="monotone"
-                        dataKey="files"
-                        stroke="#607afb"
-                        strokeWidth={3}
-                        fillOpacity={1}
-                        fill="url(#colorFiles)"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="w-[280px] bg-white p-6 rounded-xl border border-[#f1f0f4] shadow-sm flex flex-col items-center">
-                <h3 className="text-[#111218] text-lg font-bold mb-2 self-start">Quiz Accuracy</h3>
-                <div className="h-[180px] w-full relative">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={quizData}
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {quizData.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="absolute inset-0 flex items-center justify-center flex-col">
-                    <span className="text-2xl font-bold text-[#111218]">75%</span>
-                    <span className="text-[10px] text-[#6e6388] uppercase font-bold tracking-wider">
-                      Success
-                    </span>
+              {/* Error Boundary para Gráfico de Progreso */}
+              <ErrorBoundary componentName="Study Progress Chart">
+                <div className="min-w-[300px] flex-1 bg-white p-6 rounded-xl border border-[#f1f0f4] shadow-sm">
+                  <h3 className="text-[#111218] text-lg font-bold mb-4">Study Progress</h3>
+                  <div className="h-[200px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={progressData}>
+                        <defs>
+                          <linearGradient id="colorFiles" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#607afb" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#607afb" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f0f4" />
+                        <XAxis
+                          dataKey="name"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: '#6e6388', fontSize: 12 }}
+                        />
+                        <YAxis hide />
+                        <RechartsTooltip />
+                        <Area
+                          type="monotone"
+                          dataKey="files"
+                          stroke="#607afb"
+                          strokeWidth={3}
+                          fillOpacity={1}
+                          fill="url(#colorFiles)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
-              </div>
+              </ErrorBoundary>
+
+              {/* Error Boundary para Gráfico de Quiz */}
+              <ErrorBoundary componentName="Quiz Accuracy Chart">
+                <div className="w-[280px] bg-white p-6 rounded-xl border border-[#f1f0f4] shadow-sm flex flex-col items-center">
+                  <h3 className="text-[#111218] text-lg font-bold mb-2 self-start">
+                    Quiz Accuracy
+                  </h3>
+                  <div className="h-[180px] w-full relative">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={quizData}
+                          innerRadius={60}
+                          outerRadius={80}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {quizData.map((_, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="absolute inset-0 flex items-center justify-center flex-col">
+                      <span className="text-2xl font-bold text-[#111218]">75%</span>
+                      <span className="text-[10px] text-[#6e6388] uppercase font-bold tracking-wider">
+                        Success
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </ErrorBoundary>
             </div>
 
+            {/* Error Boundary para el Heatmap */}
             <div className="px-4 py-4 mb-6">
-              <div className="bg-white p-6 rounded-xl border border-[#f1f0f4] shadow-sm">
-                <h3 className="text-[#111218] text-lg font-bold mb-6">Knowledge Heatmap</h3>
-                <div className="text-xs">
-                  <CalendarHeatmap
-                    startDate={lastYear}
-                    endDate={today}
-                    values={heatmapValues}
-                    classForValue={(value: IHeatmapValue) => {
-                      if (!value || value.count === 0) return 'color-empty';
-                      return `color-scale-${Math.min(value.count, 4)}`;
-                    }}
-                    tooltipDataAttrs={(value: IHeatmapValue | undefined) => {
-                      return {
-                        'data-tooltip-id': 'heatmap-tooltip',
-                        'data-tooltip-content':
-                          value && value.date
-                            ? `${value.date}: ${value.count} files`
-                            : 'No activity',
-                      };
-                    }}
-                  />
-                  <ReactTooltip id="heatmap-tooltip" />
+              <ErrorBoundary componentName="Knowledge Heatmap">
+                <div className="bg-white p-6 rounded-xl border border-[#f1f0f4] shadow-sm">
+                  <h3 className="text-[#111218] text-lg font-bold mb-6">Knowledge Heatmap</h3>
+                  <div className="text-xs">
+                    <CalendarHeatmap
+                      startDate={lastYear}
+                      endDate={today}
+                      values={heatmapValues}
+                      classForValue={(value: IHeatmapValue) => {
+                        if (!value || value.count === 0) return 'color-empty';
+                        return `color-scale-${Math.min(value.count, 4)}`;
+                      }}
+                      tooltipDataAttrs={(value: IHeatmapValue | undefined) => {
+                        return {
+                          'data-tooltip-id': 'heatmap-tooltip',
+                          'data-tooltip-content':
+                            value && value.date
+                              ? `${value.date}: ${value.count} files`
+                              : 'No activity',
+                        };
+                      }}
+                    />
+                    <ReactTooltip id="heatmap-tooltip" />
+                  </div>
                 </div>
-              </div>
+              </ErrorBoundary>
             </div>
           </main>
         </div>
