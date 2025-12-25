@@ -1,9 +1,8 @@
-// src/sections/History.tsx
-import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { useStudyStore } from '../core/store/useStudy';
-import { HistoryFilter, IDocDetailsNavigationState, ProcessingOption } from '../core/types'; // Importar ProcessingOption
+import { useHistoryFilter } from '../hooks/useHistoryFilter';
+import { HistoryFilter, IDocDetailsNavigationState } from '../core/types';
 
 const FileIcon = () => (
   <svg
@@ -30,33 +29,8 @@ const CaretRightIcon = () => (
 );
 
 const History: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [activeFilter, setActiveFilter] = useState<HistoryFilter>('All');
-
-  const history = useStudyStore((state) => state.history);
-
-  useEffect(() => {
-    const filterFromUrl = searchParams.get('filter');
-    const filterMap: Record<string, HistoryFilter> = {
-      summaries: 'Summary',
-      quizzes: 'Quiz',
-      flashcards: 'Flashcards',
-    };
-    setActiveFilter(filterMap[filterFromUrl || ''] || 'All');
-  }, [searchParams]);
-
-  const handleFilterClick = (filter: HistoryFilter) => {
-    const urlMap: Record<string, string> = {
-      Summary: 'summaries',
-      Quiz: 'quizzes',
-      Flashcards: 'flashcards',
-      All: '',
-    };
-    const urlParam = urlMap[filter];
-    setSearchParams(urlParam ? { filter: urlParam } : {});
-    setActiveFilter(filter);
-  };
+  const { searchTerm, setSearchTerm, activeFilter, handleFilterClick, filteredDocuments } =
+    useHistoryFilter();
 
   const getButtonClasses = (filterName: HistoryFilter) => {
     const base =
@@ -65,14 +39,6 @@ const History: React.FC = () => {
       ? `${base} bg-[#607afb] text-white`
       : `${base} bg-[#f1f0f4] text-[#131118] hover:bg-[#e2e1e9]`;
   };
-
-  const filteredDocuments = history.filter((doc) => {
-    const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase());
-    // Corrección: 'as ProcessingOption' en lugar de 'as any'
-    const matchesFilter =
-      activeFilter === 'All' || doc.options.includes(activeFilter as ProcessingOption);
-    return matchesSearch && matchesFilter;
-  });
 
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-white overflow-x-hidden font-inter">
@@ -135,7 +101,9 @@ const History: React.FC = () => {
                     </div>
                     <div className="flex flex-col">
                       <p className="text-[#131118] text-base font-semibold">{doc.title}</p>
-                      <p className="text-[#6e6388] text-sm">{doc.processedOn}</p>
+                      <p className="text-[#6e6388] text-sm">
+                        {new Date(doc.processedOn).toLocaleDateString()}
+                      </p>
                       <div className="flex gap-2 mt-1">
                         {doc.options.map((opt) => (
                           <span
