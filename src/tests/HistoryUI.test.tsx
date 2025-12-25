@@ -1,10 +1,9 @@
-// src/tests/HistoryUI.test.tsx
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import HistorySection from '../sections/History';
 import { BrowserRouter } from 'react-router-dom';
-import { IAnalysis } from '../core/types';
+import HistorySection from '../sections/History';
+import { IAnalysis } from '@/core/types';
+import * as RTL from '@testing-library/react';
+const { render, screen, fireEvent } = RTL;
 
 vi.mock('../core/store/useStudy', () => ({
   useStudyStore: (selector: (state: { history: Partial<IAnalysis>[] }) => unknown) =>
