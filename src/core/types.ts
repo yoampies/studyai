@@ -85,3 +85,8 @@ export interface WorkerOutput {
   fileName: string;
   error?: string;
 }
+
+export interface IHeatmapValue {
+  date: string;
+  count: number;
+}

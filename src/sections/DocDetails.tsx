@@ -61,7 +61,7 @@ const DocDetails: React.FC = () => {
               <>
                 {/* Caso 1: Es un PDF y tenemos el archivo en memoria */}
                 {state.fileObject?.type === 'application/pdf' && pdfUrl ? (
-                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.min.js">
                     <Viewer fileUrl={pdfUrl} plugins={[defaultLayoutPluginInstance]} />
                   </Worker>
                 ) : /* Caso 2: Es un Audio (MP3) y tenemos el archivo */

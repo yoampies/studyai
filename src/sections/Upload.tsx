@@ -72,7 +72,8 @@ const Upload: React.FC = () => {
         text: textInput,
         options: processingOptions,
         results,
-        processedOn: new Date().toLocaleDateString(),
+        // CORRECCIÓN PARA HEATMAP: Usamos ISOString para asegurar compatibilidad de fechas
+        processedOn: new Date().toISOString(),
       };
 
       addAnalysis(newAnalysis);
@@ -115,7 +116,7 @@ const Upload: React.FC = () => {
               <div className="flex flex-col items-center justify-center h-48">
                 <div
                   ref={loaderRef}
-                  className="h-12 w-12 border-4 border-t-[#607afb] border-[#f1f0f4] rounded-full"
+                  className="h-12 w-12 border-4 border-t-[#607afb] border-[#f1f0f4] rounded-full animate-spin"
                 ></div>
                 <p className="mt-4 font-medium text-[#6e6388]">Processing content...</p>
               </div>
